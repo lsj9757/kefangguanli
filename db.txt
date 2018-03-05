@@ -1,0 +1,114 @@
+注册登录。
+
+
+
+
+客户：            index:  客房列表（入住）   
+      入住之后： control: 退房、换房   (请求、 只能同时存在一个请求)
+
+
+管理员            index:  客房列表 （增加、删除、修改房间）
+                     客户列表  （个人信息、请求列表）
+
+
+ 
+
+CREATE TABLE customer (
+   customer_id int AUTO_INCREMENT NOT NULL,
+   costomer_number char(11) NOT NULL,
+   customer_password varchar(32) NOT NULL,
+   customer_name varchar(32) NOT NULL,
+   customer_sex tinyint(1) NOT NULL,
+   customer_state tinyint(1) NOT NULL,
+   request_type tinyint(1) NOT NULL,
+   request_message varchar(256) NOT NULL,
+   PRIMARY KEY(`customer_id`)
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE room (
+   `room_id` int AUTO_INCREMENT NOT NULL,
+   customer_id int NOT NULL,
+   room_tablet varchar(12) NOT NULL,
+   room_state tinyint(1) NOT NULL,
+   room_classification tinyint(1) NOT NULL,
+   admin_name varchar(12) NOT NULL,
+   PRIMARY KEY (`room_id`),
+   FOREIGN KEY (`customer_id`) REFERENCES customer(`customer_id`),
+   FOREIGN KEY (`admin_name`) REFERENCES admin(`admin_name`)
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE admin (
+   admin_name varchar(12) NOT NULL,
+   admin_password varchar(32) NOT NULL,
+   PRIMARY KEY (`admin_name`)
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE log (
+   log_id int AUTO_INCREMENT NOT NULL,
+   log_time DATE NOT NULL,
+   log_type tinyint(1) NOT NULL,
+   customer_id int NOT NULL,
+   customer_number char(11) NOT NULL,
+   customer_name varchar(32) NOT NULL,
+   room_id int NOT NULL,
+   room_tablet varchar(12) NOT NULL,
+   room_classification varchar(32) NOT NULL,
+   PRIMARY KEY (`log_id`),
+   FOREIGN KEY (`customer_id`) REFERENCES customer(`customer_id`),
+   FOREIGN KEY (`room_id`) REFERENCES room(`room_id`)
+)ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+
+ 客户 customer：
+customer_id (perimary_key) 自增id
+customer_number            账号(手机号)
+customer_password       密码
+customer_name           姓名
+customer_sex            性别
+customer_age            年龄
+customer_state          客户入住状态
+request_type            请求类别
+request_message            请求信息
+* customer_time   (date)      用户入住发生时间
+
+客房  room：
+            自增
+room_id
+customer_id (foreign_key)
+room_tablet                房间号
+room_state                 房间状态
+room_classification        房间类别
+admin_name                 负责人的id/姓名
+
+
+
+负责人  admin：
+admin_name              id/姓名
+admin_password          密码
+
+* 日志 log:
+
+* log_id (primary key) auto-increment   日志id
+* log_time  (date)                      日志发生时间
+* log_type  (tinyint)                   类别(入住、换房、退房  1 2 3)
+* log_admin
+* customer_id
+* customer_number
+* customer_name
+* room_id
+* room_tablet
+* room_classification
+
+
+
+
+
+
+                                                   换房退房 => 请求 => 反馈
+基本逻辑：  用户 => 注册登录 => 选房入住 => 发出请求 => 获得入住房间信息 =^  
+
+         负责人 => 注册登录 => 查看添加/处理请求 => 发出反馈
+
+
+            
